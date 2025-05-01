@@ -1,0 +1,37 @@
+package com.eventostec.api.service;
+
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.eventostec.api.domain.coupon.Coupon;
+import com.eventostec.api.domain.coupon.CouponRequestDTO;
+import com.eventostec.api.domain.event.Event;
+import com.eventostec.api.repositories.CouponRepository;
+import com.eventostec.api.repositories.EventRepository;
+
+@Service
+public class CouponService {
+
+    @Autowired
+    private CouponRepository couponRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    public Coupon addCouponToEvent(UUID event_id, CouponRequestDTO data) {
+        Event event =  eventRepository.findById(event_id)
+            .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+        Coupon newCoupon = new Coupon();
+        newCoupon.setDiscount(data.discount());
+        newCoupon.setCode(data.code());
+        newCoupon.setValid(new java.sql.Date(data.valid()));
+        newCoupon.setEvent(event);
+
+        couponRepository.save(newCoupon);
+
+        return newCoupon;
+    }
+}
