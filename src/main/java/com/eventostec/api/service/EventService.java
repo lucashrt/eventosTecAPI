@@ -3,6 +3,8 @@ package com.eventostec.api.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -33,6 +35,9 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private AddressService addressService;
+
     public Event createEvent(EventRequestDTO data) {
         String img_url = null;
 
@@ -44,21 +49,59 @@ public class EventService {
         newEvent.setTitle(data.title());
         newEvent.setDescription(data.description());
         newEvent.setEvent_url(data.event_url());
-        newEvent.setDate(new java.sql.Date(data.date()));
+        newEvent.setDate(data.date());
         newEvent.setRemote(data.remote());
         newEvent.setImg_url(img_url);
 
         eventRepository.save(newEvent);
+        
+        if (!data.remote()) {
+            this.addressService.createAddress(data, newEvent);
+        }
 
         return newEvent;
     }
 
-    public List<EventResponseDTO> getEvents(int page, int size) {
+    public List<EventResponseDTO> getUpComingEvents(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Event> eventsPage = this.eventRepository.findAll(pageable);
-        return eventsPage.map (event -> new EventResponseDTO(event.getId(), event.getTitle(), event.getDescription(), event.getDate(), "", "", event.getRemote(), event.getImg_url(), event.getEvent_url()))
+        Page<Event> eventsPage = this.eventRepository.findUpComingEvents(LocalDateTime.now(), pageable);
+        return eventsPage.map (event -> new EventResponseDTO(
+            event.getId(), 
+            event.getTitle(), 
+            event.getDescription(), 
+            event.getDate(), 
+            event.getAddress() != null ? event.getAddress().getCity() : "", 
+            event.getAddress() != null ? event.getAddress().getUf() : "", 
+            event.getRemote(), 
+            event.getImg_url(), 
+            event.getEvent_url()))
                 .stream().toList();
     }
+
+
+    public List<EventResponseDTO> getFilteredEvents(int page, int size, String title, String city, String uf, LocalDateTime startDate, LocalDateTime endDate) {
+        title = (title != null) ? title : "";
+        city = (city != null) ? city : "";
+        uf = (uf != null) ? uf : "";
+        startDate = (startDate != null) ? startDate : LocalDateTime.of(1, 1, 1, 0, 0);
+        endDate = (endDate != null) ? endDate : LocalDateTime.now().plus(10, ChronoUnit.YEARS);
+        
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Event> eventsPage = this.eventRepository.findFilteredEvents(title, city, uf, startDate, endDate, pageable);
+        return eventsPage.map (event -> new EventResponseDTO(
+            event.getId(), 
+            event.getTitle(), 
+            event.getDescription(), 
+            event.getDate(), 
+            event.getAddress() != null ? event.getAddress().getCity() : "", 
+            event.getAddress() != null ? event.getAddress().getUf() : "", 
+            event.getRemote(), 
+            event.getImg_url(), 
+            event.getEvent_url()))
+                .stream().toList();
+    }
+
 
     private String uploadImg(MultipartFile multipartFile) {
         String fileName = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();

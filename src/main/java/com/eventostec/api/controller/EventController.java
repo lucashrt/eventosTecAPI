@@ -1,8 +1,10 @@
 package com.eventostec.api.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,19 +29,32 @@ public class EventController {
     public ResponseEntity<Event> createEvent(
             @RequestParam("title") String title,
             @RequestParam(value = "description", required = false) String description,
-            @RequestParam("date") Long date,
+            @RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd'T'HHmmss") LocalDateTime date,
             @RequestParam("city") String city,
-            @RequestParam("state") String state,
+            @RequestParam("uf") String uf,
             @RequestParam("remote") Boolean remote,
             @RequestParam(value = "image", required = false) MultipartFile image,
             @RequestParam("event_url") String event_url) {
-        EventRequestDTO body = new EventRequestDTO(title, description, date, city, state, remote, image, event_url);
+        EventRequestDTO body = new EventRequestDTO(title, description, date, city, uf, remote, image, event_url);
         return ResponseEntity.ok(this.eventService.createEvent(body));
     }
 
     @GetMapping("/listAll")
     public ResponseEntity<List<EventResponseDTO>> getEvents(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        List<EventResponseDTO> allEvents = this.eventService.getEvents(page, size);
+        List<EventResponseDTO> allEvents = this.eventService.getUpComingEvents(page, size);
         return ResponseEntity.ok(allEvents);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<EventResponseDTO>> filterEvents(
+        @RequestParam(defaultValue = "0") int page, 
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false) String title,
+        @RequestParam(required = false) String city,
+        @RequestParam(required = false) String uf,
+        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd'T'HHmmss") LocalDateTime startDate,
+        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd'T'HHmmss") LocalDateTime endDate) {
+        List<EventResponseDTO> eventsPage = this.eventService.getFilteredEvents(page, size, title, city, uf, startDate, endDate);
+        return ResponseEntity.ok(eventsPage);
     }
 }
