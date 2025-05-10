@@ -2,11 +2,13 @@ package com.eventostec.api.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.eventostec.api.domain.event.Event;
+import com.eventostec.api.domain.event.EventDetailsDTO;
 import com.eventostec.api.domain.event.EventRequestDTO;
 import com.eventostec.api.domain.event.EventResponseDTO;
 import com.eventostec.api.service.EventService;
@@ -47,14 +50,20 @@ public class EventController {
 
     @GetMapping("/filter")
     public ResponseEntity<List<EventResponseDTO>> filterEvents(
-        @RequestParam(defaultValue = "0") int page, 
-        @RequestParam(defaultValue = "10") int size,
-        @RequestParam(required = false) String title,
-        @RequestParam(required = false) String city,
-        @RequestParam(required = false) String uf,
-        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd'T'HHmmss") LocalDateTime startDate,
-        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd'T'HHmmss") LocalDateTime endDate) {
+            @RequestParam(defaultValue = "0") int page, 
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String uf,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd'T'HHmmss") LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd'T'HHmmss") LocalDateTime endDate) {
         List<EventResponseDTO> eventsPage = this.eventService.getFilteredEvents(page, size, title, city, uf, startDate, endDate);
         return ResponseEntity.ok(eventsPage);
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventDetailsDTO> getEventDetails(@PathVariable UUID eventId) {
+        EventDetailsDTO eventDetails = this.eventService.getEventDetails(eventId);
+        return ResponseEntity.ok(eventDetails);
     }
 }

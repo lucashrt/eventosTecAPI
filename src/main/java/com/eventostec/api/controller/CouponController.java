@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.eventostec.api.domain.coupon.Coupon;
 import com.eventostec.api.domain.coupon.CouponRequestDTO;
+import com.eventostec.api.domain.coupon.CouponResponseDTO;
 import com.eventostec.api.service.CouponService;
 
 @RestController
@@ -21,8 +21,8 @@ public class CouponController {
     @Autowired
     private CouponService couponService;
 
-    @PostMapping("/evento/{event_id}")
-    public ResponseEntity<Coupon> addCouponToEvent(@PathVariable UUID event_id, @RequestBody CouponRequestDTO data) {
+    @PostMapping("/event/{event_id}")
+    public ResponseEntity<CouponResponseDTO> addCouponToEvent(@PathVariable UUID event_id, @RequestBody CouponRequestDTO data) {
         return ResponseEntity.ok(this.couponService.addCouponToEvent(event_id, data));
     }
 }

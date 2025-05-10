@@ -1,6 +1,6 @@
 package com.eventostec.api.domain.coupon;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
@@ -30,7 +30,7 @@ public class Coupon {
 
     private Integer discount;
     private String code;
-    private Date valid;
+    private LocalDateTime valid;
 
     @ManyToOne
     @JoinColumn(name = "event_id")
