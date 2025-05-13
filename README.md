@@ -1,56 +1,51 @@
-📅 eventosTecAPI
 
-API RESTful desenvolvida com Java 21, Spring Boot e Maven, integrada com PostgreSQL, AWS S3 e EC2, para gerenciar eventos de tecnologia. O sistema permite o cadastro e consulta de eventos, bem como a criação de cupons promocionais associados a esses eventos.
-🚀 Tecnologias Utilizadas
+# 📅 eventosTecAPI
 
-    Java 21
+API RESTful desenvolvida com **Java 21**, **Spring Boot** e **Maven**, integrada com **PostgreSQL**, **AWS S3** e **EC2**, para gerenciar eventos de tecnologia. O sistema permite o cadastro e consulta de eventos, bem como a criação de cupons promocionais associados a esses eventos.
 
-    Spring Boot
+## 🚀 Tecnologias Utilizadas
 
-    Maven
+- Java 21  
+- Spring Boot  
+- Maven  
+- PostgreSQL  
+- AWS EC2 (deploy)  
+- AWS S3 (armazenamento de imagens)  
+- JPA/Hibernate  
+- REST API
 
-    PostgreSQL
+## 📦 Entidades Principais
 
-    AWS EC2 (deploy)
+- **Event**: representa um evento de tecnologia, com título, descrição, imagem, datas etc.
+- **Coupon**: representa um cupom promocional vinculado a um evento.
+- **Address**: representa o endereço onde o evento ocorrerá.
 
-    AWS S3 (armazenamento de imagens)
+## 📡 Endpoints da API
 
-    JPA/Hibernate
+### 🎫 Events
 
-    REST API
+- **Criar evento (com imagem)**  
+  `POST /api/event`  
+  `Content-Type: multipart/form-data`  
+  Envia os dados do evento e uma imagem para ser armazenada no S3.
 
-📦 Entidades Principais
+- **Listar todos os eventos**  
+  `GET /api/event/listAll`
 
-    Event: representa um evento de tecnologia, com título, descrição, imagem, datas etc.
+- **Filtrar eventos por parâmetros (ex: nome, data)**  
+  `GET /api/event/filter`
 
-    Coupon: representa um cupom promocional vinculado a um evento.
+- **Buscar evento por ID**  
+  `GET /api/event/{event_id}`
 
-    Address: representa o endereço onde o evento ocorrerá.
+### 💸 Coupons
 
-📡 Endpoints da API
-🎫 Events
+- **Criar cupom para um evento específico**  
+  `POST /api/coupon/event/{event_id}`
 
-    Criar evento (com imagem)
-    POST /api/event
-    Content-Type: multipart/form-data
-    Envia os dados do evento e uma imagem para ser armazenada no S3.
+## 📂 Estrutura do Projeto
 
-    Listar todos os eventos
-    GET /api/event/listAll
-
-    Filtrar eventos por parâmetros (ex: nome, data)
-    GET /api/event/filter
-
-    Buscar evento por ID
-    GET /api/event/{event_id}
-
-💸 Coupons
-
-    Criar cupom para um evento específico
-    POST /api/coupon/event/{event_id}
-
-📂 Estrutura do Projeto
-
+```
 src/
  └── main/
      ├── java/
@@ -63,32 +58,31 @@ src/
      └── resources/
          ├── application.properties
          └── db.migration/
+```
 
-☁️ Integrações AWS
+## ☁️ Integrações AWS
 
-    S3: Upload e recuperação de imagens dos eventos.
+- **S3**: Upload e recuperação de imagens dos eventos.
+- **EC2**: Aplicação hospedada em uma instância EC2 para acesso público.
 
-    EC2: Aplicação hospedada em uma instância EC2 para acesso público.
+## 🛠 Como Executar Localmente
 
-🛠 Como Executar Localmente
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/lucashrt/eventosTecAPI.git
+   cd eventosTecAPI
+   ```
 
-    Clone o repositório:
+2. Configure o banco de dados PostgreSQL no arquivo `application.properties`.
 
-git clone https://github.com/lucashrt/eventosTecAPI.git
-cd eventosTecAPI
+3. Compile e rode o projeto:
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
-Configure o banco de dados PostgreSQL no arquivo application.properties.
+## ✅ Próximos Passos
 
-Compile e rode o projeto:
-
-    ./mvnw spring-boot:run
-
-✅ Próximos Passos
-
-    Autenticação e autorização com Spring Security
-
-    Testes unitários e de integração
-
-    Documentação Swagger
-
-    Painel de administração para gestão dos eventos e cupons
+- Autenticação e autorização com Spring Security
+- Testes unitários e de integração
+- Documentação Swagger
+- Painel de administração para gestão dos eventos e cupons
