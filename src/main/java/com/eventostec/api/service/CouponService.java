@@ -46,4 +46,11 @@ public class CouponService {
     public List<Coupon> consultCoupons(UUID eventId, LocalDateTime now) {
         return couponRepository.findByEventIdAndValidAfter(eventId, now);
     }
+
+    public Coupon deleteCoupon(UUID coupon_id) {
+        Coupon coupon = couponRepository.findById(coupon_id)
+            .orElseThrow(() -> new IllegalArgumentException("Coupon not found"));
+        couponRepository.delete(coupon);
+        return coupon;
+    }
 }

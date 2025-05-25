@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,9 +62,15 @@ public class EventController {
         return ResponseEntity.ok(eventsPage);
     }
 
-    @GetMapping("/{eventId}")
+    @GetMapping("/find/{eventId}")
     public ResponseEntity<EventDetailsDTO> getEventDetails(@PathVariable UUID eventId) {
         EventDetailsDTO eventDetails = this.eventService.getEventDetails(eventId);
         return ResponseEntity.ok(eventDetails);
+    }
+
+    @DeleteMapping("/delete/{eventId}")
+    public ResponseEntity<Event> deleteEvent(@PathVariable UUID eventId) {
+        Event event = this.eventService.deleteEvent(eventId);
+        return ResponseEntity.ok(event);
     }
 }

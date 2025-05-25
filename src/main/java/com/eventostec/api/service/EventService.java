@@ -134,6 +134,12 @@ public class EventService {
             couponDTOs);
     }
 
+    public Event deleteEvent(UUID eventId) {
+        Event event = eventRepository.findById(eventId)
+            .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        eventRepository.delete(event);
+        return event;
+    }
 
     private String uploadImg(MultipartFile multipartFile) {
         String fileName = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
